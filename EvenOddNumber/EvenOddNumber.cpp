@@ -1,3 +1,10 @@
+/*
+    Here I use a ThreadGuard class using RAII technique.
+    I add even and odd values to suitable vectors using a separate thread.
+    Additionally I use a std::function<> class template which owns a callable object of class EvenOddNumber.
+    Using std::function<> is necessary in this case because of lambda parameter in function calculate().
+*/
+
 #include <iostream>
 #include <functional>
 #include <thread>
