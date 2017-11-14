@@ -4,20 +4,26 @@
   Since C++17 we should use std::invoke_result<> as in function really_async_invoke().
   http://en.cppreference.com/w/cpp/types/result_of
   
-  Furthermore, since C++14 we can use auto declaration insted of writing function returning type for example:
-  template<typename F, typename... Ts>
-  auto really_async_auto(F&& f, Ts&&... params) {
-    return std::async(std::launch::async, std::forward<F>(f), std::forward<Ts>(params)...);
-  }
+  Furthermore, since C++14 we can use auto declaration insted of writing function returning type as in struct AsyncCallableObject.
 */
 
 #include <iostream>
 #include <future>
 #include <type_traits>
+#include <mutex>
+std::mutex mut;
 
 void f() {
+    std::lock_guard<std::mutex> lg{ mut };
     std::cout << "f()" << std::endl;
 }
+
+struct AsyncCallableObject {
+    template<typename F, typename... Ts>
+    auto operator()(F&& f, Ts&&... params) {
+        return std::async(std::launch::async, std::forward<F>(f), std::forward<Ts>(params)...);
+    }
+};
 
 template<typename F, typename... Ts>
 inline std::future<typename std::result_of<F(Ts...)>::type>
@@ -31,11 +37,12 @@ really_async_invoke(F&& f, Ts&&... params) {
     return std::async(std::launch::async, std::forward<F>(f), std::forward<Ts>(params)...);
 }
 
-
 int main() {
-    auto f1 = really_async_result(f);
-    auto f2 = really_async_invoke(f);
+    auto f1 = AsyncCallableObject()(f);
+    auto f2 = really_async_result(f);
+    auto f3 = really_async_invoke(f);
 
     f1.get();
     f2.get();
+    f3.get();
 }
