@@ -3,6 +3,12 @@
   Function really_async_result() uses std::result_of<> which was deprecated in C++17.
   Since C++17 we should use std::invoke_result<> as in function really_async_invoke().
   http://en.cppreference.com/w/cpp/types/result_of
+  
+  Furthermore, since C++14 we can use auto declaration insted of writing function returning type for example:
+  template<typename F, typename... Ts>
+  auto really_async_auto(F&& f, Ts&&... params) {
+    return std::async(std::launch::async, std::forward<F>(f), std::forward<Ts>(params)...);
+  }
 */
 
 #include <iostream>
