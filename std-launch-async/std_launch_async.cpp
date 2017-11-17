@@ -4,7 +4,8 @@
   Since C++17 we should use std::invoke_result<> as in function really_async_invoke().
   http://en.cppreference.com/w/cpp/types/result_of
   
-  Furthermore, since C++14 we can use auto declaration insted of writing function returning type as in struct AsyncCallableObject.
+  Furthermore, since C++14 we can use decltype(auto) declaration instead of writing function returning type as in struct AsyncCallableObject.
+  There is a difference between 'auto' and 'decltype(auto)' - using auto means that we remove a reference in template functions.
 */
 
 #include <iostream>
@@ -20,7 +21,7 @@ void f() {
 
 struct AsyncCallableObject {
     template<typename F, typename... Ts>
-    auto operator()(F&& f, Ts&&... params) {
+    decltype(auto) operator()(F&& f, Ts&&... params) {
         return std::async(std::launch::async, std::forward<F>(f), std::forward<Ts>(params)...);
     }
 };
