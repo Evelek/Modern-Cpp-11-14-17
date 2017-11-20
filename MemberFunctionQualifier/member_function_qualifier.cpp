@@ -1,5 +1,5 @@
 /*
-  Member function qualifiers aren't very popular. Their usage is shown below - lines 30 and 34.
+  Member function qualifiers aren't very popular. Their usage is shown below - lines 29 and 33.
 */
 
 #include <iostream>
