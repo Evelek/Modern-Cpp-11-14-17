@@ -4,6 +4,12 @@
   https://dsp.krzaq.cc/post/477/zwi-1-jak-wykryc-kontenery-asocjacyjne-w-czasie-kompilacji/
 */
 
+/*
+Every STL container has its own way for removing elements.
+The idea for distinguiring std::set<> and std::list<> by using std::true_type and std::false_type was from:
+https://dsp.krzaq.cc/post/477/zwi-1-jak-wykryc-kontenery-asocjacyjne-w-czasie-kompilacji/
+*/
+
 #include <iostream>
 #include <algorithm>
 #include <type_traits>
@@ -47,7 +53,7 @@ void delete_foo(Type& coll, typename std::remove_reference_t<Type>::value_type v
 template<typename Type>
 void deleter(Type&& coll, typename std::remove_reference_t<Type>::value_type val) {
 	using Iter = typename std::remove_reference_t<Type>::iterator;
-	using decayed = typename std::decay<Type>::type;
+	using decayed = typename std::decay_t<Type>;
 	using is_special = is_special<decayed>;
 	delete_foo(std::forward<Type>(coll), val, typename std::iterator_traits<Iter>::iterator_category{}, is_special{});
 }
